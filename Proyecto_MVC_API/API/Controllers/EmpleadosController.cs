@@ -17,6 +17,7 @@ namespace API.Controllers
         private Database1Entities db = new Database1Entities();
 
         // GET: api/Empleados
+        [Authorize]
         public IQueryable<Empleado> GetEmpleado()
         {
             return db.Empleado;
@@ -24,6 +25,7 @@ namespace API.Controllers
 
         // GET: api/Empleados/5
         [ResponseType(typeof(Empleado))]
+        [Authorize]
         public IHttpActionResult GetEmpleado(int id)
         {
             Empleado empleado = db.Empleado.Find(id);
@@ -37,6 +39,7 @@ namespace API.Controllers
 
         // PUT: api/Empleados/5
         [ResponseType(typeof(void))]
+        [Authorize]
         public IHttpActionResult PutEmpleado(int id, Empleado empleado)
         {
             if (!ModelState.IsValid)
@@ -72,6 +75,7 @@ namespace API.Controllers
 
         // POST: api/Empleados
         [ResponseType(typeof(Empleado))]
+        [Authorize]
         public IHttpActionResult PostEmpleado(Empleado empleado)
         {
             if (!ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace API.Controllers
 
         // DELETE: api/Empleados/5
         [ResponseType(typeof(Empleado))]
+        [Authorize]
         public IHttpActionResult DeleteEmpleado(int id)
         {
             Empleado empleado = db.Empleado.Find(id);

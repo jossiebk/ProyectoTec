@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
@@ -14,23 +15,36 @@ namespace MCV.Controllers
         public ActionResult Index()
         {
             List<Tienda> tiendas = null;
-            using (var client = new HttpClient())
+            var cookieContainer = new CookieContainer();
+            using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+            using (var client = new HttpClient(handler))
             {
                 client.BaseAddress = new Uri("https://localhost:44381/api/");
-                var response = client.GetAsync("tiendas");
-                response.Wait();
 
-                var result = response.Result;
-                if (result.IsSuccessStatusCode)
+                try
                 {
-                    var reader = result.Content.ReadAsAsync<List<Tienda>>();
-                    reader.Wait();
-                    tiendas = reader.Result;
+                    cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                    var response = client.GetAsync("tiendas");
+                    response.Wait();
+
+                    var result = response.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var reader = result.Content.ReadAsAsync<List<Tienda>>();
+                        reader.Wait();
+                        tiendas = reader.Result;
+                    }
+                    else
+                    {
+                        tiendas = new List<Tienda>();
+                        ModelState.AddModelError(String.Empty, "No hay datos del API");
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    tiendas = new List<Tienda>();
                     ModelState.AddModelError(String.Empty, "No hay datos del API");
+                    tiendas = new List<Tienda>();
                 }
             }
             return View(tiendas);
@@ -46,17 +60,30 @@ namespace MCV.Controllers
         public Tienda GetTiendaByID(int id)
         {
             Tienda tienda = null;
-            using (var client = new HttpClient())
+            var cookieContainer = new CookieContainer();
+            using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+            using (var client = new HttpClient(handler))
             {
                 client.BaseAddress = new Uri("https://localhost:44381/api/");
-                var response = client.GetAsync("tiendas/" + id);
-                response.Wait();
-                var result = response.Result;
-                if (result.IsSuccessStatusCode)
+
+                try
                 {
-                    var reader = result.Content.ReadAsAsync<Tienda>();
-                    reader.Wait();
-                    tienda = reader.Result;
+                    cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                    var response = client.GetAsync("tiendas/" + id);
+                    response.Wait();
+                    var result = response.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var reader = result.Content.ReadAsAsync<Tienda>();
+                        reader.Wait();
+                        tienda = reader.Result;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(String.Empty, "No hay datos del API");
+                    tienda = new Tienda();
                 }
             }
             return tienda;
@@ -76,18 +103,29 @@ namespace MCV.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+                using (var client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:44381/api/");
 
-                    var response = client.PostAsJsonAsync<Tienda>("tiendas", newTienda);
-                    response.Wait();
-                    var result = response.Result;
-                    if (result.IsSuccessStatusCode)
+                    try
                     {
-                        return RedirectToAction("Index");
+                        cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                        var response = client.PostAsJsonAsync<Tienda>("tiendas", newTienda);
+                        response.Wait();
+                        var result = response.Result;
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            return View();
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
                         return View();
                     }
@@ -114,18 +152,29 @@ namespace MCV.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+                using (var client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:44381/api/");
 
-                    var response = client.PutAsJsonAsync("tiendas/" + id, newTienda);
-                    response.Wait();
-                    var result = response.Result;
-                    if (result.IsSuccessStatusCode)
+                    try
                     {
-                        return RedirectToAction("Index");
+                        cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                        var response = client.PutAsJsonAsync("tiendas/" + id, newTienda);
+                        response.Wait();
+                        var result = response.Result;
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            return View();
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
                         return View();
                     }
@@ -150,16 +199,28 @@ namespace MCV.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+                using (var client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:44381/api/");
 
-                    var response = client.DeleteAsync("tiendas/" + id);
-                    response.Wait();
-                    var result = response.Result;
-                    if (result.IsSuccessStatusCode)
+                    try
                     {
-                        return RedirectToAction("Index");
+                        cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                        var response = client.DeleteAsync("tiendas/" + id);
+                        response.Wait();
+                        var result = response.Result;
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                        
+                    }
+                    catch (Exception e)
+                    {
+                        return View();
                     }
                     return View();
                 }

@@ -9,8 +9,8 @@
 
 @using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
-    
+
+
     <div class="form-horizontal">
         <h4>Cliente</h4>
         <hr />
@@ -63,6 +63,11 @@
             </div>
         </div>
     </div>
+    <tr>
+        <td>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        </td>
+    </tr>
 }
 
 <div>

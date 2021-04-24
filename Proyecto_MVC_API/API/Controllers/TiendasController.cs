@@ -17,6 +17,7 @@ namespace API.Controllers
         private Database1Entities db = new Database1Entities();
 
         // GET: api/Tiendas
+        [Authorize]
         public IQueryable<Tienda> GetTienda()
         {
             return db.Tienda;
@@ -24,6 +25,7 @@ namespace API.Controllers
 
         // GET: api/Tiendas/5
         [ResponseType(typeof(Tienda))]
+        [Authorize]
         public IHttpActionResult GetTienda(int id)
         {
             Tienda tienda = db.Tienda.Find(id);
@@ -37,6 +39,7 @@ namespace API.Controllers
 
         // PUT: api/Tiendas/5
         [ResponseType(typeof(void))]
+        [Authorize]
         public IHttpActionResult PutTienda(int id, Tienda tienda)
         {
             if (!ModelState.IsValid)
@@ -72,6 +75,7 @@ namespace API.Controllers
 
         // POST: api/Tiendas
         [ResponseType(typeof(Tienda))]
+        [Authorize]
         public IHttpActionResult PostTienda(Tienda tienda)
         {
             if (!ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace API.Controllers
 
         // DELETE: api/Tiendas/5
         [ResponseType(typeof(Tienda))]
+        [Authorize]
         public IHttpActionResult DeleteTienda(int id)
         {
             Tienda tienda = db.Tienda.Find(id);

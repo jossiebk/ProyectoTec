@@ -17,6 +17,7 @@ namespace API.Controllers
         private Database1Entities db = new Database1Entities();
 
         // GET: api/Ventas
+        [Authorize]
         public IQueryable<Venta> GetVenta()
         {
             return db.Venta;
@@ -24,6 +25,7 @@ namespace API.Controllers
 
         // GET: api/Ventas/5
         [ResponseType(typeof(Venta))]
+        [Authorize]
         public IHttpActionResult GetVenta(int id)
         {
             Venta venta = db.Venta.Find(id);
@@ -37,6 +39,7 @@ namespace API.Controllers
 
         // PUT: api/Ventas/5
         [ResponseType(typeof(void))]
+        [Authorize]
         public IHttpActionResult PutVenta(int id, Venta venta)
         {
             if (!ModelState.IsValid)
@@ -72,6 +75,7 @@ namespace API.Controllers
 
         // POST: api/Ventas
         [ResponseType(typeof(Venta))]
+        [Authorize]
         public IHttpActionResult PostVenta(Venta venta)
         {
             if (!ModelState.IsValid)
@@ -87,6 +91,7 @@ namespace API.Controllers
 
         // DELETE: api/Ventas/5
         [ResponseType(typeof(Venta))]
+        [Authorize]
         public IHttpActionResult DeleteVenta(int id)
         {
             Venta venta = db.Venta.Find(id);

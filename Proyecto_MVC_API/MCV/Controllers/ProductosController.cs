@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
@@ -14,23 +15,36 @@ namespace MCV.Controllers
         public ActionResult Index()
         {
             List<Producto> productos = null;
-            using (var client = new HttpClient())
+            var cookieContainer = new CookieContainer();
+            using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+            using (var client = new HttpClient(handler))
             {
                 client.BaseAddress = new Uri("https://localhost:44381/api/");
-                var response = client.GetAsync("productos");
-                response.Wait();
 
-                var result = response.Result;
-                if (result.IsSuccessStatusCode)
+                try
                 {
-                    var reader = result.Content.ReadAsAsync<List<Producto>>();
-                    reader.Wait();
-                    productos = reader.Result;
+                    cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                    var response = client.GetAsync("productos");
+                    response.Wait();
+
+                    var result = response.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var reader = result.Content.ReadAsAsync<List<Producto>>();
+                        reader.Wait();
+                        productos = reader.Result;
+                    }
+                    else
+                    {
+                        productos = new List<Producto>();
+                        ModelState.AddModelError(String.Empty, "No hay datos del API");
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    productos = new List<Producto>();
                     ModelState.AddModelError(String.Empty, "No hay datos del API");
+                    productos = new List<Producto>();
                 }
             }
             return View(productos);
@@ -47,17 +61,30 @@ namespace MCV.Controllers
         public Producto GetProductoByID(int id)
         {
             Producto productos = null;
-            using (var client = new HttpClient())
+            var cookieContainer = new CookieContainer();
+            using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+            using (var client = new HttpClient(handler))
             {
                 client.BaseAddress = new Uri("https://localhost:44381/api/");
-                var response = client.GetAsync("productos/" + id);
-                response.Wait();
-                var result = response.Result;
-                if (result.IsSuccessStatusCode)
+
+                try
                 {
-                    var reader = result.Content.ReadAsAsync<Producto>();
-                    reader.Wait();
-                    productos = reader.Result;
+                    cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                    var response = client.GetAsync("productos/" + id);
+                    response.Wait();
+                    var result = response.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var reader = result.Content.ReadAsAsync<Producto>();
+                        reader.Wait();
+                        productos = reader.Result;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(String.Empty, "No hay datos del API");
+                    productos = new Producto();
                 }
             }
             return productos;
@@ -79,18 +106,29 @@ namespace MCV.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+                using (var client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:44381/api/");
 
-                    var response = client.PostAsJsonAsync<Producto>("productos", newProducto);
-                    response.Wait();
-                    var result = response.Result;
-                    if (result.IsSuccessStatusCode)
+                    try
                     {
-                        return RedirectToAction("Index");
+                        cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                        var response = client.PostAsJsonAsync<Producto>("productos", newProducto);
+                        response.Wait();
+                        var result = response.Result;
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            return View();
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
                         return View();
                     }
@@ -117,18 +155,29 @@ namespace MCV.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+                using (var client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:44381/api/");
 
-                    var response = client.PutAsJsonAsync("productos/" + id, newProducto);
-                    response.Wait();
-                    var result = response.Result;
-                    if (result.IsSuccessStatusCode)
+                    try
                     {
-                        return RedirectToAction("Index");
+                        cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                        var response = client.PutAsJsonAsync("productos/" + id, newProducto);
+                        response.Wait();
+                        var result = response.Result;
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            return View();
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
                         return View();
                     }
@@ -153,16 +202,27 @@ namespace MCV.Controllers
         {
             try
             {
-                using (var client = new HttpClient())
+                var cookieContainer = new CookieContainer();
+                using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
+
+                using (var client = new HttpClient(handler))
                 {
                     client.BaseAddress = new Uri("https://localhost:44381/api/");
 
-                    var response = client.DeleteAsync("productos/" + id);
-                    response.Wait();
-                    var result = response.Result;
-                    if (result.IsSuccessStatusCode)
+                    try
                     {
-                        return RedirectToAction("Index");
+                        cookieContainer.Add(new Uri("https://" + Request.Url.Host.ToString()), new Cookie("tecCookie", Request.Cookies["tecCookie"].Value));
+                        var response = client.DeleteAsync("productos/" + id);
+                        response.Wait();
+                        var result = response.Result;
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        return View();
                     }
                     return View();
                 }
